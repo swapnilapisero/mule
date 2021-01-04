@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="79fc2590-7824-494e-a55b-c89f5bb648fc" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<cloudhub:config name="CloudHub_Config" doc:name="CloudHub Config" doc:id="8e3680f9-9493-4ae9-b805-e1e61cf05df3" >
+		<cloudhub:connection username="${user}" password="${password}" environment="${environment.id}" />
+	</cloudhub:config>
+	<flow name="xyzFlow" doc:id="98fb5fec-f1be-4e29-9073-a05281431da1" >
+		<http:listener doc:name="Listener" doc:id="d845cd10-927d-4ba4-9a4e-9bfd540a4ded" config-ref="HTTP_Listener_config" path="/testing">
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json --- error.description]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="a13c5d27-4967-4cb4-b942-ba2043fbba6b" />
+		<cloudhub:create-notification doc:name="Create Notification" doc:id="c30386b4-b734-4cda-94ff-8f05c2c20725" config-ref="CloudHub_Config" domain="xyz-dev" priority="ERROR">
+			<cloudhub:message ><![CDATA["Testing Email"]]></cloudhub:message>
+		</cloudhub:create-notification>
+		<logger level="INFO" doc:name="Logger" doc:id="f88999c0-faba-496e-9cbf-53865af60735" message="I am in second  -  #[payload]"/>
+	</flow>
+</mule>
