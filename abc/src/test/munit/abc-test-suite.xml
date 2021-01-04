@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="abc-test-suite.xml" />
+	<munit:test name="abc-test-suite-abcFlowTest" doc:id="aafcbfd5-c355-4069-a697-82061b3b6ff7" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="9c40724a-5d37-42af-b94d-6c1c93821c6f" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="HTTP_Request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[payload]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="66dc7f2f-7602-4c37-b393-6d7eb8fb6917">
+				<munit:payload value='{
+    "to": {
+        "type": "sms",
+        "number": "918378910673"
+    },
+    "from": {
+        "type": "sms",
+        "number": "918378910673"
+    },
+    "message": {
+        "content": {
+            "type": "text",
+            "text": "Hello Test"
+        }
+    },
+    "client_ref": "Testing"
+}' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to abcFlow" doc:id="8e3f4f98-f868-4efe-b354-083c17edf3c1" name="abcFlow"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="abc-test-suite-abcFlowTest1" doc:id="63f14c63-1ad0-4e87-9dba-ba34ad691ee2" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to abcFlow" doc:id="a86d545e-3ab3-413c-aa95-ccc2113f2020" name="abcFlow"/>
+		</munit:execution>
+	</munit:test>
+
+
+</mule>
